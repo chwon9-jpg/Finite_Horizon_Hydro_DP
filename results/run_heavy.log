@@ -1,0 +1,92 @@
+machine   Darwin 25.6.0 / arm64 / Python 3.9.6 / NumPy 2.0.2
+workers   14
+heavy     True
+
+  worked example (III-A)        Eval = -46.25            OK
+  one-dam example               V_0 = (-8,-54,-76), J = -62   OK
+  interpolation identities      (22) and (23)             OK
+  parallel == serial            bit for bit              OK
+  blocked == unblocked          bit for bit              OK
+
+E1  interpolation vs rounding, d = 2, m = 10, N = 10000
+  reference n = 1281:  Jhat = -233.9933   vbar0 = -233.9242
+
+  accuracy  (err is |Jhat - Jhat_ref|; +- is the PAIRED 95% half-width)
+      n   delta |  interp Jhat       err       +- |   round Jhat       err       +-
+      6  20.000 |    -231.0172    2.9761   0.0064 |    -159.5189   74.4745   0.9645
+     11  10.000 |    -233.4644    0.5290   0.0045 |    -205.0899   28.9034   0.4086
+     21   5.000 |    -233.9686    0.0247   0.0018 |    -228.9400    5.0533   0.1242
+     41   2.500 |    -233.9868    0.0065   0.0011 |    -232.4679    1.5255   0.0270
+     81   1.250 |    -233.9846    0.0088   0.0018 |    -233.0172    0.9762   0.0154
+    161   0.625 |    -233.9915    0.0018   0.0012 |    -233.1970    0.7964   0.0076
+    321   0.312 |    -233.9926    0.0007   0.0006 |    -233.4627    0.5306   0.0047
+    641   0.156 |    -233.9934    0.0000   0.0003 |    -233.7711    0.2222   0.0055
+
+  what the model promises against what it delivers
+  (+- is the UNPAIRED half-width (60): vbar0 is deterministic, so
+   the gap cannot be paired and a gap below +- is not resolved)
+      n   delta |  interp vbar0       gap      +- |   round vbar0        gap      +-
+      6  20.000 |     -227.2691   +3.7482  0.5617 |     -399.7593  -240.2405  1.3372
+     11  10.000 |     -232.0012   +1.4631  0.5611 |     -346.9157  -141.8258  0.8753
+     21   5.000 |     -233.3699   +0.5987  0.5613 |     -287.1603   -58.2203  0.6222
+     41   2.500 |     -233.7053   +0.2815  0.5613 |     -260.2588   -27.7910  0.5716
+     81   1.250 |     -233.8451   +0.1394  0.5611 |     -246.6596   -13.6424  0.5659
+    161   0.625 |     -233.8784   +0.1131  0.5611 |     -240.4223    -7.2253  0.5620
+    321   0.312 |     -233.9081   +0.0845  0.5612 |     -237.0680    -3.6052  0.5618
+    641   0.156 |     -233.9203   +0.0730  0.5612 |     -235.5294    -1.7583  0.5605
+  gap = vbar0(x0) - Jhat.  Positive means the discretized model
+  under-promises what its own strategy achieves, negative that it
+  over-promises.  The two rules differ in sign.
+    -> results/e1_interpolation_vs_rounding.csv
+
+E2a  cost at fixed resolution (single process, so that the
+     ratios are not distorted by process start-up)
+   d    n   m        |E|        |U|       work       time    ratio    units/s
+   2    5   3         25          9   8.10e+04    0.006 s      nan   1.30e+07
+   4    5   3        625         81   6.08e+07    0.827 s    132.6   7.35e+07
+   6    5   3     15,625        729   4.78e+10   14.3 min   1034.9   5.59e+07
+    -> results/e2a_fixed_resolution.csv
+     A row whose units/s is far below the others never reached full
+     speed: at that size the fixed cost of one backward pass -- the
+     grid, the array allocations, 12 x L Python-level calls --
+     outweighs the arithmetic, so its time ratio understates the
+     true growth.  No fixed resolution avoids this: one that is
+     compute-bound at d=2 is out of reach at d=6.
+
+E2b  cost at the finest resolution affordable (14 process(es))
+   d    n   m    n*m   delta          |E|       work       time    units/s
+   2 1281  10  12810    0.08    1,640,961   5.91e+10   84.373 s   7.00e+08
+   4   16  10    160    6.67       65,536   7.86e+11   27.9 min   4.70e+08
+   6    7   4     28   16.67      117,649   2.02e+12  110.5 min   3.05e+08
+    -> results/e2b_finest_affordable.csv
+
+E3  the estimator (59)-(60) beside vbar0(x0), at several meshes
+   d    n   m   delta         N |       vbar0        Jhat  half-width       gap  gap/|J|
+   2   41  10    2.50   100,000 |    -233.705    -234.032       0.177    +0.327    0.14%
+   2   81  10    1.25   100,000 |    -233.845    -234.032       0.177    +0.187    0.08%
+   2  161  10    0.62   100,000 |    -233.878    -234.038       0.177    +0.160    0.07%
+   2  321  10    0.31 1,000,000 |    -233.908    -233.917       0.056    +0.009    0.00%
+
+   4    5  10   25.00    10,000 |    -746.512    -754.513       1.807    +8.001    1.06%
+   4    8  10   14.29    10,000 |    -768.781    -774.581       1.781    +5.799    0.75%
+   4   12  10    9.09    10,000 |    -772.812    -774.992       1.783    +2.179    0.28%
+   4   16  10    6.67    10,000 |    -773.864    -775.420       1.776    +1.556    0.20%
+
+   6    4   4   33.33     4,000 |   -1487.396   -1543.253       5.524   +55.857    3.62%
+   6    5   4   25.00     4,000 |   -1511.509   -1537.343       5.531   +25.834    1.68%
+   6    6   4   20.00     4,000 |   -1527.718   -1554.319       5.537   +26.601    1.71%
+   6    7   4   16.67     4,000 |   -1538.070   -1558.670       5.544   +20.599    1.32%
+    -> results/e3_estimator.csv
+  A gap smaller than the half-width is not distinguishable from
+  sampling noise and establishes nothing; raise N for that row.
+
+E4  figures
+    marginal water value   dam 1 1.955 (p1+p2 = 2.00),  dam 2 0.673 (p2 = 0.70)
+    -> figures/e4a_value_function.pdf
+    (dotted lines are the interior grid points g_k; the mean paths
+     track them, which is what n = 6 costs in resolution)
+    -> figures/e4b_trajectories.pdf
+    sd = 28.52, i.e. 12% of the mean: vbar0 is an expectation, not a guarantee
+    -> figures/e4c_payoff_distribution.pdf
+
+total wall clock 4.44 h
