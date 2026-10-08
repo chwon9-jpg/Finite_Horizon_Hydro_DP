@@ -6,8 +6,10 @@ Dynamic Programming for Hydro Reservoirs* (C. Won, M2 Optimization, IP Paris),
 following Carpentier, Chancelier, Leclère and Pacaud, *Stochastic decomposition
 applied to large-scale hydro valleys management*, EJOR 270(3):1086–1098, 2018.
 
-The paper is in this repository as `paper.pdf`. Equation and section numbers in
-the code comments, such as (23) or Section III-C1, refer to it.
+The paper is in this repository as `paper.pdf` and on ResearchGate at
+[doi:10.13140/RG.2.2.29841.80482](https://doi.org/10.13140/RG.2.2.29841.80482).
+Equation and section numbers in the code comments, such as (23) or Section
+III-C1, refer to it.
 
 ```
 hydro.py         Algorithms 1 to 3 of the paper, vectorised
@@ -190,7 +192,21 @@ Points that belong to the code rather than to the mathematics.
 
 ## Machine
 
-Apple M4 Pro, 14 cores (10 performance and 4 efficiency), 24 GB, macOS 26.6.2,
-Python 3.9.6, NumPy 2.0.2. Carpentier et al. report their timings on a 3.4 GHz
-four-core Intel Xeon E3, so absolute times are not comparable between the two
-papers; the growth in the number of dams is.
+Our machine: Apple M4 Pro, 14 cores (10 performance and 4 efficiency), 24 GB, macOS 26.6.2,
+Python 3.9.6, NumPy 2.0.2. 
+
+Carpentier et al. report their timings on a 3.4 GHz four-core Intel Xeon E3, so absolute times are not comparable between the two papers; the growth in the number of dams is.
+
+## Citation
+
+```bibtex
+@techreport{won2026hydro,
+  author      = {Won, Christopher},
+  title       = {Finite Horizon Dynamic Programming for Hydro Reservoirs},
+  institution = {École polytechnique, Université Paris-Saclay},
+  type        = {Technical Report},
+  year        = {2026},
+  month       = {10},
+  doi         = {10.13140/RG.2.2.29841.80482}
+}
+```
