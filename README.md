@@ -1,8 +1,8 @@
-# Numerical results: finite-horizon DP for hydro reservoirs
+# Numerical results: finite-horizon DP for hydro valleys
 
 Exact finite-horizon dynamic programming on a discretized state space, for a
 valley of 2, 4 or 6 hydroelectric dams. Implementation of *Finite Horizon
-Dynamic Programming for Hydro Reservoirs* (C. Won, M2 Optimization, IP Paris),
+Dynamic Programming for Hydro Valleys* (C. Won, M2 Optimization, IP Paris),
 following Carpentier, Chancelier, Leclère and Pacaud, *Stochastic decomposition
 applied to large-scale hydro valleys management*, EJOR 270(3):1086–1098, 2018.
 
@@ -12,7 +12,7 @@ Equation and section numbers in the code comments, such as (23) or Section
 III-C1, refer to it.
 
 ```
-hydro.py         Algorithms 1 to 3 of the paper, vectorised
+hydro.py         Algorithms 1 to 3 of the paper, vectorized
 instances.py     the 2, 4 and 6 dam valleys
 tests.py         regression tests against the paper's hand computations
 experiments.py   E1 to E5
@@ -202,8 +202,8 @@ Carpentier et al. report their timings on a 3.4 GHz four-core Intel Xeon E3, so 
 ```bibtex
 @techreport{won2026hydro,
   author      = {Won, Christopher},
-  title       = {Finite Horizon Dynamic Programming for Hydro Reservoirs},
-  institution = {École polytechnique, Université Paris-Saclay},
+  title       = {Finite Horizon Dynamic Programming for Hydro Valleys},
+  institution = {École Polytechnique, Université Paris-Saclay},
   type        = {Technical Report},
   year        = {2026},
   month       = {10},
